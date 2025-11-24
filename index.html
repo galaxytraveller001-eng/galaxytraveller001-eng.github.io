@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IMU-to-4D</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">IMU-to-4D</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Anonymous CVPR submission  </span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img id="teaser" src="./static/images/teasor.png" alt="Teaser">
+        <source src="./static/images/teasor.png"
+                type="image/png">
+      </img>
+      <h2 class="subtitle has-text-centered">
+        We propose a novel method to reconstruct 4D human-scene from wearable IMUs time-series input.
+      </h2>
+    </div>
+  </div>
+</section>
+  
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Experiment Results</h2>
+
+        Note all visualizations are done on the test dataset.
+
+        <br>
+
+        <br>
+
+        <h3 class="title is-4">HumanML Dataset (IMU -> Motion & Text)</h3>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate our method on the HumanML dataset. <span style="color: rgb(41, 215, 116);">White and Green:</span> Ground-truth, <span style="color: rgb(41, 151, 215);">Blue:</span> Predicted, <span style="color: rgb(236, 61, 48);">Red:</span> MobilePoser. 
+            We shifted the prediction and baseline for better visualization. We didn't predict the object in the scene since there is no ground-truth object to train the model.
+            The baseline has no text prediction ability.
+          </p>
+        </div>
+
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-15"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/15.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">A person jumps to the right, then to the left.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">He jumps to the left a short distance.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person jumps in place.</span>
+             </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-24"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/24.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">Someone walks and jumps in a chaotic manner before kicking the ground.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">A person hops around, alternating between different spots.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person walks forward then turns around and walks back.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-700"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/700.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">A person performs various stretches by bending knees and moving from side to side, then by pulling the right elbow back with the left arm.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">A person starts with his arms apart, brings them together, and then moves right to left, and completes with a left-handed swing technique.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person leans forward and then looks back to the left.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-749"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/749.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">A person quickly crawls backwards on their front side using both hands and legs.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">They are crawling backward on the room's surface.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person is crawling forward and moving his legs straight and forward.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-761"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/761.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">They move their arms in a rhythmic up-and-down pattern.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The person is doing upper body exercises with their arms.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person stands still and then releases their right hand.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <video id="replay-video-humanml-4552"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humanml/4552.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">A person executes a backhand shot in tennis.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The person takes a mock shot or two uneven hand movements.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person is stooping to the right then turns his left and walks backwards.</span>
+            </p>
+          </div>
+        </div>
+
+        <br>
+
+        <br>
+
+        <h3 class="title is-4">LINGO Dataset (IMU -> Motion & Text)</h3>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate our method on the LINGO dataset. <span style="color: rgb(41, 215, 116);">White and Green:</span> Ground-truth Ground-truth, <span style="color: rgb(41, 151, 215);">Blue:</span> Predicted, <span style="color: rgb(236, 61, 48);">Red:</span> MobilePoser. 
+            We shifted the prediction and baseline for better visualization. We didn't predict the object in the scene since there is no ground-truth object to train the model.
+            The baseline has no object prediction ability, so we use MotionGPT to predict the text prediction from MobilePoser output.
+          </p>
+        </div>
+
+        <div class="content has-text-centered" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, auto); gap: 1rem; justify-items: center;">
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-2"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/2.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">walk front right.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">walk front right while holding phone in right hand.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person looks around then looks around and sees something else.</span>
+            </p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-173"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/173.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">read book with right hand while in standing position.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">A person is stationary, holding a small object in their right hand and making a lifting motion with their left hand, which they are scratching, before returning to a neutral position.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person has their right hand in front of them.</span>
+            </p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-769"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/769.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">put down toothbrush in left hand on cabinet.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">put down camera in left hand on cabinet while in standing position.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person stands still and then moves their right hand slightly.</span>
+            </p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-63"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/63.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">walk back left.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">walk back left while holding gamepad in left hand.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person turns to the left and then turns around.</span>
+            </p>
+          </div>
+
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-212"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/212.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">sit down on toilet while holding toothbrush in left hand.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">sit down on chair while holding camera in left hand.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person turns to the right and walks forward.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-218"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/lingo/218.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">brush teeth with toothbrush in left hand.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">A person dressed in loose, light clothing poses at a slow, fluid pace, raising their left hand with fingers spread, then placing it back at their side, conveying a sense of peace and contemplation.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person stands still with their right hand on their left foot.</span>
+            </p>
+          </div>
+
+
+        </div>
+
+
+        <h3 class="title is-4">HUMOTO Dataset (IMU -> Motion & Text & Scene)</h3>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate our method on the HUMOTO dataset, and predict the object in the first frame. <span style="color: rgb(41, 215, 116);">White and Green:</span> Ground-truth. <span style="color: rgb(41, 151, 215);">Blue:</span> Predicted, <span style="color: rgb(236, 61, 48);">Red:</span> MobilePoser. 
+            The baseline has no object prediction ability, so we use MotionGPT to predict the text prediction from MobilePoser output.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 1.5rem; width: 100%;">
+
+
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-11"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/11.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject places trash can with both hands on ground. The subject picks trash from ground. The subject throws trash in trash can.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject bends body toward the ground, grasps a trash can with both hands, and then lifts it.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person bends over and looks down.</span>
+            </p>
+          </div>
+
+
+
+          
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-0"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/0.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject walks around while carrying a side plate in their right hand.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject holds a spatula in their right hand while walking back and forth.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person walks forward and then turns around to face the direction of a mirror.</span>
+            </p>
+          </div>
+
+
+
+
+
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-1"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/1.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">A person walks forward while carrying a table lamp with both hands, periodically turning and repositioning their grip on the table lamp's base and pole.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">A person walks back and forth while carrying a serving bowl with both hands.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person walks forward with a limp and then turns around to face the direction they are in.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-15"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/15.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject pulls the dining chair towards the subject. The subject moves the dining chair away from the subject.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject lifts the working chair. The subject holds with both hands with both hands. The subject puts working chair with both hands down on ground.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">a person bows slightly to the right and then bends over with his hands resting on top.</span>
+            </p>
+          </div>
+
+          <!-- <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-2"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/2.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject moves the mug towards head. The subject drinks from the mug.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject looks inside the mug. The subject swirls the mug with right hand in a clockwise direction. The subject drinks from the mug.</span>
+            </p>
+          </div> -->
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-3"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/3.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject grasps and lifts the deep plate with right hand. The subject shakes the deep plate. The subject puts the deep plate on the table.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject uses a wok turner to scoop eggs from a frying pan, lifting the pan with their other hand, and places the eggs onto a side plate.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person is standing still with their hands together.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-5"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/5.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              Note: the ground-truth assets is broken in the original dataset, so the rendering has some incorrect holes.
+              GT Text: <span style="color: rgb(108, 215, 41);">A person removes the cap from a vacuum flask, dispenses soap inside, shakes it to wash the interior, and then grabs a sponge to continue cleaning.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);"> The subject puts soap from a dispenser into a mug, then uses a sponge to wash the inside and outside of the mug over a sink.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person standing still with their hands together.</span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-9"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/9.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">The subject organizes and transfers cooking utensils into the draw organizer tray.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject organizes utensils by moving a turner, a soup ladle, a knife, and a peeler from a table into a drawer organizer tray.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person standing still bends slightly.</span>
+            </p>
+          </div>
+
+
+
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <video id="replay-video-humoto-24"
+                   controls
+                   muted
+                   autoplay
+                   loop
+                   preload
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/humoto/24.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              GT Text: <span style="color: rgb(108, 215, 41);">Carrying a stack of plastic bowls in their left hand, the subject walks forward, makes a clockwise turn, and then continues walking across the room.</span>
+              Pred Text: <span style="color: rgb(97, 208, 255);">The subject carry vacuum flask with left hand walk back and forth repeatedly.</span>
+              Baseline Text: <span style="color: rgb(255, 106, 129);">A person walks forward slowly, turns around and walks back toward the direction they came from.</span>
+            </p>
+          </div>
+        </div>
+
+
+
+
+      </div>
+    </div>
+
+
+
+    <h3 class="title is-4">VirtualHome Dataset (IMU -> Motion & Scene)</h3>
+    <div class="content has-text-justified">
+      <p>
+        We evaluate our method on the VirtualHome dataset. White: Ground-truth, Blue: Predicted.
+      </p>
+    </div>
+
+
+
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+      <video id="replay-video-virtualhome-20"
+             controls
+             muted
+             autoplay
+             loop
+             preload
+             playsinline
+             style="width: 100%;">
+        <source src="./static/videos/virtualhome/20.mp4"
+                type="video/mp4">
+      </video>
+      <p style="margin-top: 0.5rem;">
+        GT object: <span style="color: rgb(108, 215, 41);">faucet, fridge, dishwasher, chair, cabinet, bench, bookshelf.</span>
+        Pred object: <span style="color: rgb(97, 208, 255);">faucet, fridge, sofa, dishwasher, stove, chair, cabinet, microwave.</span>
+
+      </p>
+    </div>
+
+    <br>
+
+    <br>
+
+
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+      <video id="replay-video-virtualhome-80"
+             controls
+             muted
+             autoplay
+             loop
+             preload
+             playsinline
+             style="width: 100%;">
+        <source src="./static/videos/virtualhome/80.mp4"
+                type="video/mp4">
+      </video>
+      <p style="margin-top: 0.5rem;">
+        GT object: <span style="color: rgb(108, 215, 41);">cabinet, faucet, bench, dishwasher, bookshelf.</span>
+        Pred object: <span style="color: rgb(97, 208, 255);">cabinet, faucet, bench, stove, dishwasher, fridge, microwave.</span>
+      </p>
+    </div>
+
+
+    <br>
+
+
+    <br>
+
+
+ 
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Applications</h2>
+
+        <!-- Relocalization. -->
+        <h3 class="title is-4">Relocalization (IMU -> Motion + Absolute Location)</h3>
+        <div class="content has-text-justified">
+          <p>
+            This experiment is done on ParaHome dataset. After finetuning on the training split, we can use the trained model to localize the person on the same scene by predicting its absolute 3D pose given IMU time-series input. The white is ground-truth and blue is our prediction. 
+          </p>
+        </div>
+        <div class="content has-text-centered" style="display: flex; gap: 1rem; justify-content: center; align-items: flex-start;">
+          <div style="display: flex; flex-direction: column; align-items: center; width: 48%;">
+            <video id="replay-video-1"
+                   controls
+                   muted
+                   preload
+                   playsinline
+                   autoplay
+                   loop
+                   style="width: 100%;">
+              <source src="./static/videos/reloc_video/video_1.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              Sample 1
+            </p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; width: 48%;">
+            <video id="replay-video-2"
+                   controls
+                   muted
+                   preload
+                   autoplay
+                   loop
+                   playsinline
+                   style="width: 100%;">
+              <source src="./static/videos/reloc_video/video_2.mp4"
+                      type="video/mp4">
+            </video>
+            <p style="margin-top: 0.5rem;">
+              Sample 2
+            </p>
+          </div>
+        </div>
+        <!--/ Relocalization. -->
+
+      </div>
+    </div>
+    <!--/ Animation. -->
+
+
+
+
+
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Limitations And Failures Cases</h2>
+
+        <h3 class="title is-4">Drifting</h3>
+        <div class="content has-text-justified">
+          <p>
+            The human motion will drift over time due to the accumulation error of motion prediction. The initial position is not overlapped here for better visualization. The white is ground-truth and blue is our prediction, red is the MobilePoser baseline.
+          </p>
+        </div>
+        <div class="content has-text-centered">
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 autoplay
+                 loop
+                 width="50%">
+            <source src="./static/videos/limitation/drift_baseline.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <h3 class="title is-4">Incorrect Pose Estimation</h3>
+        <div class="content has-text-justified">
+          <p>
+            The motion sampling cause vibration in the predicted pose.
+          </p>
+        </div>
+        <div class="content has-text-centered">
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 autoplay
+                 loop
+                 width="50%">
+            <source src="./static/videos/lingo/1397.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <h3 class="title is-4">Incorrect Object Estimation</h3>
+        <div class="content has-text-justified">
+          <p>
+            The human sometimes will intersect with the object in the scene.
+          </p>
+        </div>
+        <div class="content has-text-centered">
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 autoplay
+                 loop
+                 width="50%">
+            <source src="./static/videos/humoto/21.mp4"
+                    type="video/mp4">
+              
+          </video>
+          <p style="margin-top: 0.5rem;">
+            In this sample, the generated utility cart intersects with the human.
+            GT Text: <span style="color: rgb(108, 215, 41);">The subject picks up a lint roller and uses it to sweep and clean a blouse on a hanger resting on a table.</span>
+            Pred Text: <span style="color: rgb(97, 208, 255);">The subject grabs a frying pan from a utility cart with their right hand, transfers it to their left hand, and places it back on the cart.</span>
+           </p>
+        </div> 
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
