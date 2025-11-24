@@ -155,3 +155,23 @@ body {
 #interpolation-image-wrapper img {
   border-radius: 5px;
 }
+
+/* Abstract section styles (no background — match other sections) */
+.abstract-section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+.abstract-box {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.abstract-box p,
+#abstract-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
